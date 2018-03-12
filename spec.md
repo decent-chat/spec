@@ -13,10 +13,19 @@
   * [2.2](#22-routing) Routing
   * [2.3](#23-error-responses) Error responses
   * [2.4](#24-session-ids-and-authentication) Session IDs and authentication
+  * [2.5](#25-permissions-and-roles) Permissions and roles
 * [3.](#3-bidirectional-websocket-communication) Bidirectional WebSocket communication
   * [3.1](#31-websocket-protocol) WebSocket protocol
   * [3.2](#32-pingdata-and-pongdata-events) "pingdata" and "pongdata" events
   * [3.3](#33-useronline-and-useroffline-events) "user/online" and "user/offline" events
+* [4.](#4-api-endpoints-and-events) API endpoints and events
+  * [4.1](#41-miscellaneous) Miscellaneous
+  * [4.2](#42-user-related) User-related
+  * [4.3](#43-role-related) Role-related
+  * [4.4](#44-message-related) Message-related
+  * [4.5](#45-channel-related) Channel-related
+  * [4.6](#46-emote-related) Emote-related
+  * [4.7](#47-session-related) Session-related
 
 ## 1. Introduction
 
@@ -29,6 +38,10 @@ supercede both in terms of features and morality.
 A common use-case for Decent is private servers between friends, however it is
 flexible enough to allow larger, more varied servers to exist. It can even be
 utilised as a platform for multiplayer text-based video games!
+
+Note that this document acts as a preface/specification around
+[doc.md](doc.md#api), which pre-documents all WebSocket events and endpoints
+that servers MUST implement in full.
 
 ### 1.2 Terminology
 
@@ -45,8 +58,8 @@ an HTTP request's query parameters (that is, data given in the URL itself).
 
 ### 1.3 Data types
 
-The data types "string", "boolean", "object", and "array" in this document are
-to be understood as described in
+The data types "undefined", "null", "string", "boolean", "object", and "array"
+in this document are to be understood as described in
 [ECMA 404](https://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 Also note "int" and "float", which are to be interpreted as integer and
 floating-point number respectively.
@@ -89,8 +102,8 @@ error.
 
 ### 2.2 Routing
 
-Valid HTTP requests for routes under `/api/` described in the rest of this
-document should be responded to as described there.
+Valid HTTP requests for routes under `/api/` MUST be responded to as detailed
+in section 4.
 
 GET requests for the route (`/`) SHOULD serve sufficient information to connect
 to the relevant server, for example a web-based client or instance details.
@@ -165,9 +178,66 @@ the session ID MUST be ignored.
 Servers MUST ensure that valid session IDs actually identifies existing,
 non-deleted users.
 
-If a request requires a permission (see section 4.1) and a session ID is not
-provided or identifies a user lacking the required permission(s), the server
-MUST respond with a NOT_ALLOWED error and the request must be a no-op.
+### 2.5 Permissions and roles
+
+Permissions are a way of limiting and granting certain abilities to groups of
+users, called 'roles'.
+
+Permissions are stored within an object mapping permission key to
+`boolean | undefined`. A single permission in this object can have three states:
+
+| Value       | Meaning                |
+| ----------- | ---------------------- |
+| `true`      | Granted                |
+| `false`     | Denied                 |
+| `undefined` | Unset, follow cascade  |
+
+For example, a role that grants the `sendMessages` permission but changes
+nothing else would have the permission object:
+
+  {
+    "sendMessages": true
+  }
+
+There are 3 constant role IDs that servers MUST apply based on user state:
+
+* `_owner`, given to the first user registered to the server only
+* `_user`, given to all users
+* `_guest`, given to requesters that did not provide a session ID (see section 2.4)
+
+Servers MUST NOT allow any of these constant roles to be deleted. However,
+they SHOULD be editable (that is, their permissions object and name).
+
+Individual permissions MUST be computed according to the following algorithm.
+
+1. Let `k` be the permission key we are computing
+2. Let `r` be an array of permission objects (from roles) applied to the user
+3. Let `v` be the value of the key `k` of the value at index 0 of `r`; ie. `r[0][k]`
+4. If `v` is `true`, return `true` (granted)
+5. If `v` is `false`, return `false` (denied explicitly)
+6. If `v` is `undefined` or the key `k` is not present in the object, continue to step 7
+7. Repeat from step 3 for the next value in `r` (`index++`). If we reach the end of `r` without returning, return `false` (denied by default)
+
+If a request requires a permission and the requesting user/guest does not have
+the required permission as per the above algorithm, the server MUST respond with
+a NOT_ALLOWED error (and, therefore, be a no-op).
+
+The order of `r` (role priority) MUST be sorted in the following way:
+
+* Channel-specific permissions for the `_owner` role, if the user has this role (First.)
+* Server-wide permissions for the `_owner` role, if the user has this role
+* Channel-specific permissions for roles of the user
+* Channel-specific permissions for the `_user` role, if the user is a logged-in member of the server, or the `_guest` role, if the user is not logged in
+* Channel-specific permissions for the `_everyone` role
+* Server-wide permissions for roles of the user
+* Server-wide permissions for the `_user` or `_guest` role, as above
+* Server-wide permissions for the `_everyone` role (Last.)
+
+Permissions for roles applied to a user (both server-wide and channel-specific)
+MUST be prioritized according to the role prioritization order (see
+`PATCH /api/roles/order` in section 4.3). Note that the order of any given
+user's `roles` property MUST NOT have any effect on the order roles are
+applied when calculating their permissions.
 
 ## 3. Bidirectional WebSocket communication
 
@@ -229,9 +299,11 @@ following form:
 If the server receives a valid `"pingdata"` event from a connected client
 socket, it MUST associate the sender socket with the provided `sessionID`. This
 data will later be used to determine whether particular events should be sent
-to the socket or not.
+to the socket or not. Likewise, if the sessionID is not provided, null, or
+otherwise invalid, the server MUST unassociate the sender socket from any user
+or session.
 
-Upon receiving a valid `"pingdata"` event where `data.sessionID` is not null or
+Upon receiving a valid `"pongdata"` event where `data.sessionID` is not null or
 undefined and is a known session ID (see section 2.4: Session IDs), the server
 SHOULD mark the related user as 'online' (see section 3.3).
 
@@ -271,6 +343,112 @@ similar to the `"user/online"` event:
       }
     }
 
----
+# 4. API endpoints and events
 
-This document is a work-in-progress.
+**For more details on the user-facing API of any of the following endpoints or
+events, see [doc.md](doc.md#api).** If a server cannot handle or does not
+implement a particular endpoint for whatever reason, it MUST respond with an
+error (code NO) with the form specified in section 2.3.
+
+Servers SHOULD implement all endpoints and events fully.
+
+## 4.1 Miscellaneous
+
+| Type   | Endpoint / event name                                               |
+| ------:| ------------------------------------------------------------------- |
+| event  | pingdata                                                            |
+| event  | pongdata (from client)                                              |
+| GET    | /api/                                                               |
+| GET    | /api/settings                                                       |
+| PATCH  | /api/settings                                                       |
+| event  | server-settings/update                                              |
+| POST   | /api/upload-image                                                   |
+
+## 4.2 User-related
+
+| Type   | Endpoint / event name                                               |
+| ------:| ------------------------------------------------------------------- |
+| event  | user/new                                                            |
+| event  | user/delete                                                         |
+| event  | user/online                                                         |
+| event  | user/offline                                                        |
+| event  | user/update                                                         |
+| event  | user/mentions/add                                                   |
+| event  | user/mentions/remove                                                |
+| GET    | /api/users                                                          |
+| POST   | /api/users                                                          |
+| GET    | /api/users/:id                                                      |
+| PATCH  | /api/users/:id                                                      |
+| DELETE | /api/users/:id                                                      |
+| GET    | /api/users/:id/permissions                                          |
+| GET    | /api/users/:id/mentions                                             |
+| GET    | /api/users/:userID/channel-permissions/:channelID**                 |
+| GET    | /api/username-available/:username                                   |
+
+## 4.3 Role-related
+
+| Type   | Endpoint / event name                                               |
+| ------:| ------------------------------------------------------------------- |
+| event  | role/new                                                            |
+| event  | role/update                                                         |
+| event  | role/delete                                                         |
+| GET    | /api/roles                                                          |
+| POST   | /api/roles                                                          |
+| GET    | /api/roles/order                                                    |
+| PATCH  | /api/roles/order                                                    |
+| GET    | /api/roles/:id                                                      |
+| PATCH  | /api/roles/:id                                                      |
+| DELETE | /api/roles/:id                                                      |
+
+## 4.4 Message-related
+
+| Type   | Endpoint / event name                                               |
+| ------:| ------------------------------------------------------------------- |
+| event  | message/new                                                         |
+| event  | message/edit                                                        |
+| event  | message/delete                                                      |
+| POST   | /api/messages                                                       |
+| GET    | /api/messages/:id                                                   |
+| PATCH  | /api/messages/:id                                                   |
+| DELETE | /api/messages/:id                                                   |
+
+## 4.5 Channel-related
+
+| Type   | Endpoint / event name                                               |
+| ------:| ------------------------------------------------------------------- |
+| event  | channel/new                                                         |
+| event  | channel/update                                                      |
+| event  | channel/delete                                                      |
+| event  | channel/pins/add                                                    |
+| event  | channel/pins/remove                                                 |
+| GET    | /api/channels                                                       |
+| POST   | /api/channels                                                       |
+| GET    | /api/channels/:id                                                   |
+| PATCH  | /api/channels/:id                                                   |
+| DELETE | /api/channels/:id                                                   |
+| POST   | /api/channels/:id/mark-read                                         |
+| GET    | /api/channels/:id/messages                                          |
+| PATCH  | /api/channels/:id/role-permissions                                  |
+| GET    | /api/channels/:id/pins                                              |
+| POST   | /api/channels/:id/pins                                              |
+| DELETE | /api/channels/:channelID/pins/:messageID                            |
+
+## 4.6 Emote-related
+
+| Type   | Endpoint / event name                                               |
+| ------:| ------------------------------------------------------------------- |
+| event  | emote/new                                                           |
+| event  | emote/delete                                                        |
+| GET    | /api/emotes                                                         |
+| POST   | /api/emotes                                                         |
+| GET    | /api/emotes/:shortcode                                              |
+| DELETE | /api/emotes/:shortcode                                              |
+
+## 4.7 Session-related
+
+| Type   | Endpoint / event name                                               |
+| ------:| ------------------------------------------------------------------- |
+| GET    | /api/sessions                                                       |
+| POST   | /api/sessions                                                       |
+| GET    | /api/sessions/:id                                                   |
+| DELETE | /api/sessions/:id                                                   |
