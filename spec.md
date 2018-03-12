@@ -199,14 +199,18 @@ nothing else would have the permission object:
     "sendMessages": true
   }
 
-There are 3 constant role IDs that servers MUST apply based on user state:
+There are 2 constant role IDs that servers MUST apply based on whether the
+requester provided a session ID or not (see section 2.4):
 
-* `_owner`, given to the first user registered to the server only
-* `_user`, given to all users
-* `_guest`, given to requesters that did not provide a session ID (see section 2.4)
+* `_user`, given to all users as a fallback role
+* `_guest`, given to reqeusters without a session ID
 
 Servers MUST NOT allow any of these constant roles to be deleted. However,
 they SHOULD be editable (that is, their permissions object and name).
+
+Note: Servers MAY give a particular group of users some kind of automatically
+generated 'administrator' role to allow changes to be made by the owner of the
+server without manually editing the database or similar.
 
 Individual permissions MUST be computed according to the following algorithm.
 
