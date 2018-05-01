@@ -129,8 +129,6 @@ We look at the final permission object: `{readMessages: false, sendMessages: fal
 
 The actual priority of permission objects is determined according to the roles applied to the user and channel-specific permissions (which are dependent on the roles), and the order is determined as follows:
 
-* Channel-specific permissions for the `_owner` role, if the user has this role (Most priority.)
-* Server-wide permissions for the `_owner` role, if the user has this role
 * Channel-specific permissions for roles of the user
 * Channel-specific permissions for the `_user` role, if the user is a logged-in member of the server, or the `_guest` role, if the user is not logged in
 * Channel-specific permissions for the `_everyone` role
@@ -158,6 +156,7 @@ Below is a table of all permissions.
 | `manageEmotes`    | Allows for creation and removal of [emotes](#emotes).    |
 | `readMessages`    | Allows for viewing of channel [messages](#messages); if false, the channel does not show up in the channel list. |
 | `sendMessages`    | Allows for [sending messages](#send-message).            |
+| `deleteMessages`  | Allows for [deleting messages](#delete-message) that you did not author. |
 | `sendSystemMessages` | Allows for [sending system messages](#send-message).  |
 | `uploadImages`    | Allows [image uploads](#upload-image).                   |
 | `allowNonUnique`  | Allows the creation of things with non-unique [names](#names). |
