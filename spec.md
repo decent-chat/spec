@@ -202,8 +202,8 @@ nothing else would have the permission object:
 There are 2 constant role IDs that servers MUST apply based on whether the
 requester provided a session ID or not (see section 2.4):
 
-* `_user`, given to all users as a fallback role
-* `_guest`, given to reqeusters without a session ID
+* `_user`, applied to all logged-in users as a fallback role
+* `_everyone`, applied to **all** requesters
 
 Servers MUST NOT allow any of these constant roles to be deleted. However,
 they SHOULD be editable (that is, their permissions object and name).
@@ -228,13 +228,11 @@ a NOT_ALLOWED error (and, therefore, be a no-op).
 
 The order of `r` (role priority) MUST be sorted in the following way:
 
-* Channel-specific permissions for the `_owner` role, if the user has this role (First.)
-* Server-wide permissions for the `_owner` role, if the user has this role
-* Channel-specific permissions for roles of the user
-* Channel-specific permissions for the `_user` role, if the user is a logged-in member of the server, or the `_guest` role, if the user is not logged in
+* Channel-specific permissions for roles of the user (First.)
+* Channel-specific permissions for the `_user` role, if the user is a logged-in member of the server
 * Channel-specific permissions for the `_everyone` role
 * Server-wide permissions for roles of the user
-* Server-wide permissions for the `_user` or `_guest` role, as above
+* Server-wide permissions for the `_user` role (if applicable, as above)
 * Server-wide permissions for the `_everyone` role (Last.)
 
 Permissions for roles applied to a user (both server-wide and channel-specific)

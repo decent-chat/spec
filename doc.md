@@ -129,12 +129,12 @@ We look at the final permission object: `{readMessages: false, sendMessages: fal
 
 The actual priority of permission objects is determined according to the roles applied to the user and channel-specific permissions (which are dependent on the roles), and the order is determined as follows:
 
-* Channel-specific permissions for roles of the user
-* Channel-specific permissions for the `_user` role, if the user is a logged-in member of the server, or the `_guest` role, if the user is not logged in
+* Channel-specific permissions for roles of the user (First.)
+* Channel-specific permissions for the `_user` role, if the user is a logged-in member of the server
 * Channel-specific permissions for the `_everyone` role
 * Server-wide permissions for roles of the user
-* Server-wide permissions for the `_user` or `_guest` role, as above
-* Server-wide permissions for the `_everyone` role (Least priority.)
+* Server-wide permissions for the `_user` role (if applicable, as above)
+* Server-wide permissions for the `_everyone` role (Last.)
 
 Permissions for roles of the user (both globally and channel-specific) are prioritized according to the [role prioritization order](#prioritize-roles). Note that the order of the user's `roles` property **does not** have any effect on the order roles that are applied when calculating their perissions.
 
