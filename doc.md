@@ -676,8 +676,10 @@ Returns `{ channel }`. Note [extra data](#channel-extra-data) will only be retur
 GET /api/channels/5678
 
 <- {
-<-   "id": "5678",
-<-   "name": "general"
+<-   "channel": {
+<-     id": "5678",
+<-     "name": "general"
+<-   }
 <- }
 ```
 
@@ -1159,11 +1161,9 @@ GET /api/username-available/patrick
 
 ```js
 {
+  "id": ID,
   "name": string,
   "permissions": object, // A permissions object
-
-  // If true, new users will automatically get this role by default.
-  "default": boolean
 }
 ```
 
