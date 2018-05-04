@@ -1049,10 +1049,6 @@ GET /api/users/1/mentions?limit=1
 + `email` (string | null; optional) - Not public, used to generate avatar URL
 + `flair` (string | null; optional) - Displayed beside username in chat, errors if longer than 50 characters
 
-**The following parameters are available to sessions with the `manageRoles` [permission](#permissions):**
-
-+ `roleIDs`: (array of [role IDs](#roles); optional) - Used to generate `user.permissions`
-
 Returns `{}` and applies changes, assuming a valid session for this user (or an admin) is provided and no errors occur. Also emits [user/update](#user-update).
 
 ```js
@@ -1084,6 +1080,35 @@ PATCH /api/users/12
 
 ('flair: null' removes the flair.)
 ```
+
+<a name='give-user-role'></a>
+### Give a role to a user [POST /api/users/:userID/roles]
++ requires [permission](#permissions): `manageRoles`
+  + also require more permissions (see below)
++ **in-url** userID (ID) - The ID of the user to give the role to
++ roleID (ID) - The ID of the role to be given
+
+The role may only be given if the requesting user has all the permissions that are specified by that role (even if the value specified by the role is false).
+
+On success, emits [user/update](#user-update) and returns `{}`.
+
+<a name='take-user-role'></a>
+### Take a role from a user [DELETE /api/users/:userID/roles/:roleID]
++ requires [permission](#permissions): `manageRoles`
+  + also requires more permissions (see below)
++ **in-url** userID (ID) - The ID of the user to take the role from
++ **in-url** roleID (ID) - The ID of the role to be taken
+
+As with [giving a role](#give-user-role), the role may only be taken if the requesting user has all the permissions that are specified by that role (even if the value specified by the role is false).
+
+On success, emits [user/update](#user-update) and returns `{}`.
+
+<a name='get-user-roles'></a>
+### Retrieve a list of a user's roles [GET /api/users/:id/roles]
++ does not require a session
++ **in-url** id (ID) - The ID of the user to fetch the roles of
+
+Returns `{ roleIDs }`. (Not actually more functionally useful than simply checking `user.roleIDs` from [`/api/users/:id`](#get-user); only exists for convenience.)
 
 <a name='get-user'></a>
 ### Retrieve a user by ID [GET /api/users/:id]
