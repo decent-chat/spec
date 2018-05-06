@@ -265,7 +265,8 @@ Below is a table of all permissions.
 | ----------------- | -------------------------------------------------------- |
 | `manageServer`    | Allows changes to [server settings](#settings).          |
 | `manageUsers`     | Allows for updating of users other than yourself, and allows deletion of users. |
-| `manageRoles`     | Allows creation/deletion/modification/granting/revoking of [roles](#roles) under you. |
+| `manageRoles`     | Allows creation/deletion/modification of [roles](#roles) under you. |
+| `grantRoles`      | Allows granting/revoking [roles](#roles) under you to users. |
 | `manageChannels`  | Allows management and editing of [channels](#channels) and their permissions. |
 | `managePins`      | Allows for [pinning](#pin) and [unpinning](#unpin) of messages. |
 | `manageEmotes`    | Allows for creation and removal of [emotes](#emotes).    |
@@ -1191,7 +1192,7 @@ PATCH /api/users/12
 
 <a name='give-user-role'></a>
 #### Give a role to a user [POST /api/users/:userID/roles]
-+ requires [permission](#permissions): `manageRoles`
++ requires [permission](#permissions): `grantRoles`
   + also require more permissions (see below)
 + **in-url** userID (ID) - The ID of the user to give the role to
 + roleID (ID) - The ID of the role to be given
@@ -1202,7 +1203,7 @@ On success, emits [user/update](#user-update) and returns `{}`.
 
 <a name='take-user-role'></a>
 #### Take a role from a user [DELETE /api/users/:userID/roles/:roleID]
-+ requires [permission](#permissions): `manageRoles`
++ requires [permission](#permissions): `grantRoles`
   + also requires more permissions (see below)
 + **in-url** userID (ID) - The ID of the user to take the role from
 + **in-url** roleID (ID) - The ID of the role to be taken
