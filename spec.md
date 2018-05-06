@@ -4,28 +4,32 @@
 |:-------------:| --------------- |
 |               | Not yet         |
 
-* [1.](#1-introduction) Introduction
-  * [1.1](#11-about) About
-  * [1.2](#12-terminology) Terminology
-  * [1.3](#13-data-types) Data types
-* [2.](#2-http-request-protocol) HTTP request protocol
-  * [2.1](#21-content-type) Content-type
-  * [2.2](#22-routing) Routing
-  * [2.3](#23-error-responses) Error responses
-  * [2.4](#24-session-ids-and-authentication) Session IDs and authentication
-  * [2.5](#25-permissions-and-roles) Permissions and roles
-* [3.](#3-bidirectional-websocket-communication) Bidirectional WebSocket communication
-  * [3.1](#31-websocket-protocol) WebSocket protocol
-  * [3.2](#32-pingdata-and-pongdata-events) "pingdata" and "pongdata" events
-  * [3.3](#33-useronline-and-useroffline-events) "user/online" and "user/offline" events
-* [4.](#4-api-endpoints-and-events) API endpoints and events
-  * [4.1](#41-miscellaneous) Miscellaneous
-  * [4.2](#42-user-related) User-related
-  * [4.3](#43-role-related) Role-related
-  * [4.4](#44-message-related) Message-related
-  * [4.5](#45-channel-related) Channel-related
-  * [4.6](#46-emote-related) Emote-related
-  * [4.7](#47-session-related) Session-related
+<!-- toc -->
+
+  * [1. Introduction](#1-introduction)
+    + [1.1 About](#11-about)
+    + [1.2 Terminology](#12-terminology)
+    + [1.3 Data types](#13-data-types)
+  * [2. HTTP request protocol](#2-http-request-protocol)
+    + [2.1 Content type](#21-content-type)
+    + [2.2 Routing](#22-routing)
+    + [2.3 Error responses](#23-error-responses)
+    + [2.4 Session IDs and authentication](#24-session-ids-and-authentication)
+    + [2.5 Permissions and roles](#25-permissions-and-roles)
+  * [3. Bidirectional WebSocket communication](#3-bidirectional-websocket-communication)
+    + [3.1 WebSocket protocol](#31-websocket-protocol)
+    + [3.2 "pingdata" and "pongdata" events](#32-pingdata-and-pongdata-events)
+    + [3.3 "user/online" and "user/offline" events](#33-useronline-and-useroffline-events)
+- [4. API endpoints and events](#4-api-endpoints-and-events)
+  * [4.1 Miscellaneous](#41-miscellaneous)
+  * [4.2 User-related](#42-user-related)
+  * [4.3 Role-related](#43-role-related)
+  * [4.4 Message-related](#44-message-related)
+  * [4.5 Channel-related](#45-channel-related)
+  * [4.6 Emote-related](#46-emote-related)
+  * [4.7 Session-related](#47-session-related)
+
+<!-- tocstop -->
 
 ## 1. Introduction
 
