@@ -8,7 +8,121 @@
 defined by [the specification](spec.md). If you are writing a server
 implementation, please refer to that document also.**
 
+
+<details><summary><b>Table of contents</b></summary>
+
+<!-- toc -->
+
+- [Transport](#transport)
+    + [HTTP(S) endpoints - For client->server requests](#https-endpoints---for-client-server-requests)
+    + [WebSocket events - For server->client event notifications](#websocket-events---for-server-client-event-notifications)
+- [Authentication](#authentication)
+  * [With HTTP(S) - per-request](#with-https---per-request)
+- [With WebSockets - ping/pong periodically](#with-websockets---pingpong-periodically)
+  * ['pingdata' evemt](#pingdata-evemt)
+- ['pongdata' event](#pongdata-event)
+- [Errors](#errors)
+- [Permissions](#permissions)
+- [Miscellaneous](#miscellaneous)
+  * [Endpoints](#endpoints)
+    + [Retrieve server implementation details [GET /api]](#retrieve-server-implementation-details-get-api)
+    + [Upload an image [POST /api/upload-image]](#upload-an-image-post-apiupload-image)
+- [Settings](#settings)
+  * [Events](#events)
+    + [server-settings/update](#server-settingsupdate)
+  * [Endpoints](#endpoints-1)
+    + [Retrieve all settings [GET /api/settings]](#retrieve-all-settings-get-apisettings)
+    + [Modify settings [PATCH /api/settings]](#modify-settings-patch-apisettings)
+- [Emotes](#emotes)
+  * [Events](#events-1)
+    + [emote/new](#emotenew)
+    + [emote/delete](#emotedelete)
+  * [Endpoints](#endpoints-2)
+    + [List emotes [GET /api/emotes]](#list-emotes-get-apiemotes)
+    + [Add a new emote [POST /api/emotes]](#add-a-new-emote-post-apiemotes)
+    + [View an emote [GET /api/emotes/:shortcode]](#view-an-emote-get-apiemotesshortcode)
+    + [Delete an existing emote [DELETE /api/emotes/:shortcode]](#delete-an-existing-emote-delete-apiemotesshortcode)
+- [Sessions](#sessions)
+  * [Endpoints](#endpoints-3)
+    + [Fetch the current user's sessions [GET /api/sessions]](#fetch-the-current-users-sessions-get-apisessions)
+    + [Login [POST /api/sessions]](#login-post-apisessions)
+    + [Fetch session details [GET /api/sessions/:id]](#fetch-session-details-get-apisessionsid)
+    + [Logout [DELETE /api/sessions/:id]](#logout-delete-apisessionsid)
+- [Messages](#messages)
+    + [Message types](#message-types)
+    + [Mentions](#mentions)
+  * [Events](#events-2)
+    + [message/new](#messagenew)
+    + [message/edit](#messageedit)
+    + [message/delete](#messagedelete)
+  * [Endpoints](#endpoints-4)
+    + [Send a message [POST /api/messages]](#send-a-message-post-apimessages)
+    + [Retrieve a message [GET /api/messages/:id]](#retrieve-a-message-get-apimessagesid)
+    + [Edit a message [PATCH /api/messages/:id]](#edit-a-message-patch-apimessagesid)
+    + [Delete a message [DELETE /api/messages/:id]](#delete-a-message-delete-apimessagesid)
+- [Channels](#channels)
+    + [Extra data](#extra-data)
+  * [Events](#events-3)
+    + [channel/new](#channelnew)
+    + [channel/update](#channelupdate)
+    + [channel/pins/add](#channelpinsadd)
+    + [channel/pins/remove](#channelpinsremove)
+    + [channel/delete](#channeldelete)
+  * [Endpoints](#endpoints-5)
+    + [Get list of channels [GET /api/channels]](#get-list-of-channels-get-apichannels)
+    + [Create a channel [POST /api/channels]](#create-a-channel-post-apichannels)
+    + [Retrieve a channel [GET /api/channels/:id]](#retrieve-a-channel-get-apichannelsid)
+    + [Rename a channel [PATCH /api/channels/:id]](#rename-a-channel-patch-apichannelsid)
+    + [Delete a channel [DELETE /api/channels/:id]](#delete-a-channel-delete-apichannelsid)
+    + [Mark a channel as read [POST /api/channels/:id/mark-read]](#mark-a-channel-as-read-post-apichannelsidmark-read)
+    + [Get messages in channel [GET /api/channels/:id/messages]](#get-messages-in-channel-get-apichannelsidmessages)
+    + [Update channel-specific role permissions [PATCH /api/channels/:id/role-permissions]](#update-channel-specific-role-permissions-patch-apichannelsidrole-permissions)
+    + [Get channel-specific role permissions [GET /api/channels/:id/role-permissions]](#get-channel-specific-role-permissions-get-apichannelsidrole-permissions)
+    + [Retrieve all pinned messages [GET /api/channels/:id/pins]](#retrieve-all-pinned-messages-get-apichannelsidpins)
+    + [Pin a message [POST /api/channels/:id/pins]](#pin-a-message-post-apichannelsidpins)
+    + [Unpin a message [DELETE /api/channels/:channelID/pins/:messageID]](#unpin-a-message-delete-apichannelschannelidpinsmessageid)
+- [Users](#users)
+  * [Events](#events-4)
+    + [user/new](#usernew)
+    + [user/delete](#userdelete)
+    + [user/online](#useronline)
+    + [user/offline](#useroffline)
+    + [user/update](#userupdate)
+    + [user/mentions/add](#usermentionsadd)
+    + [user/mentions/remove](#usermentionsremove)
+  * [Endpoints](#endpoints-6)
+  * [Fetch users [GET /api/users]](#fetch-users-get-apiusers)
+    + [Register (create new user) [POST /api/users]](#register-create-new-user-post-apiusers)
+    + [Retrieve a user by ID [GET /api/users/:id]](#retrieve-a-user-by-id-get-apiusersid)
+    + [List mentions of a user [GET /api/users/:id/mentions]](#list-mentions-of-a-user-get-apiusersidmentions)
+    + [Update user details [PATCH /api/users/:id]](#update-user-details-patch-apiusersid)
+    + [Retrieve a user by ID [GET /api/users/:id]](#retrieve-a-user-by-id-get-apiusersid-1)
+    + [Get a user's permissions [GET /api/users/:id/permissions]](#get-a-users-permissions-get-apiusersidpermissions)
+    + [Get a user's channel-specific permissions [GET /api/users/:userID/channel-permissions/:channelID]](#get-a-users-channel-specific-permissions-get-apiusersuseridchannel-permissionschannelid)
+    + [Delete a user [DELETE /api/users/:id]](#delete-a-user-delete-apiusersid)
+    + [Check if a username is available [GET /api/username-available/:username]](#check-if-a-username-is-available-get-apiusername-availableusername)
+- [Roles](#roles)
+    + [See also](#see-also)
+  * [Events](#events-5)
+    + [role/new](#rolenew)
+    + [role/update](#roleupdate)
+    + [role/delete](#roledelete)
+  * [Endpoints](#endpoints-7)
+    + [List roles [GET /api/roles]](#list-roles-get-apiroles)
+    + [Retrieve role prioritization order [GET /api/roles/order]](#retrieve-role-prioritization-order-get-apirolesorder)
+    + [Change role prioritization order [PATCH /api/roles/order]](#change-role-prioritization-order-patch-apirolesorder)
+    + [Retrieve a role by ID [GET /api/roles/:id]](#retrieve-a-role-by-id-get-apirolesid)
+    + [Add a new role [POST /api/roles]](#add-a-new-role-post-apiroles)
+    + [Update a role [PATCH /api/roles/:id]](#update-a-role-patch-apirolesid)
+    + [Delete a role [DELETE /api/roles/:id]](#delete-a-role-delete-apirolesid)
+
+<!-- tocstop -->
+
+</details>
+
 ---
+
+## Transport
 
 Servers support the following two forms of transport, which are meant to be used in conjunction with eachother:
 
@@ -26,7 +140,7 @@ Messages sent to and from sockets are JSON strings, following the format `{ evt,
 
 Clients should authenticate using both of the following methods at the same time.
 
-<details><summary><b>With HTTP(S)</b> - per-request</summary>
+### With HTTP(S) - per-request
 
 When a request is made to an API endpoint, the server searches for a [session ID](#sessions) string given in the request using **one** of:
 
@@ -42,15 +156,13 @@ If the request requires [permission(s)](#permissions) and a session ID is not pr
 
 Note that "you" in this document typically refers to the provided session ID's related user.
 
-</details>
+### With WebSockets - ping/pong periodically
 
-<details><summary><b>With WebSockets</b> - ping/pong periodically</summary>
-
-## pingdata
+#### 'pingdata' evemt
 
 Sent periodically (typically every 10 seconds) by the server, as well as immediately upon the client socket connecting. Clients should respond with a `pongdata` event, as described below. No `data` is sent with the event.
 
-## pongdata
+#### 'pongdata' event
 
 Should be **sent from clients** (unlike all other WebSocket transmissions) in response to `pingdata`. Notifies the server of any information related to the particular socket. Passed data should include:
 
@@ -1000,7 +1112,7 @@ GET /api/users/1
 ```
 
 <a name='get-mentions'></a>
-#### List [mentions](#mentions) of a user [GET /api/users/:id/mentions]
+#### List mentions of a user [GET /api/users/:id/mentions]
 + does not require session, however:
   * only returns messages where you have the `viewMessages` [permission](#permissions) for the message's channel
 + **in-url** id (ID) - The user ID to fetch the mentions of
