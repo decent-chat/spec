@@ -18,9 +18,9 @@ implementation, please refer to that document also.**
     + [WebSocket events - For server->client event notifications](#websocket-events---for-server-client-event-notifications)
 - [Authentication](#authentication)
   * [With HTTP(S) - per-request](#with-https---per-request)
-- [With WebSockets - ping/pong periodically](#with-websockets---pingpong-periodically)
-  * ['pingdata' evemt](#pingdata-evemt)
-- ['pongdata' event](#pongdata-event)
+  * [With WebSockets - ping/pong periodically](#with-websockets---pingpong-periodically)
+    + ['pingdata' evemt](#pingdata-evemt)
+    + ['pongdata' event](#pongdata-event)
 - [Errors](#errors)
 - [Permissions](#permissions)
 - [Miscellaneous](#miscellaneous)
@@ -96,6 +96,9 @@ implementation, please refer to that document also.**
     + [Retrieve a user by ID [GET /api/users/:id]](#retrieve-a-user-by-id-get-apiusersid)
     + [List mentions of a user [GET /api/users/:id/mentions]](#list-mentions-of-a-user-get-apiusersidmentions)
     + [Update user details [PATCH /api/users/:id]](#update-user-details-patch-apiusersid)
+    + [Give a role to a user [POST /api/users/:userID/roles]](#give-a-role-to-a-user-post-apiusersuseridroles)
+    + [Take a role from a user [DELETE /api/users/:userID/roles/:roleID]](#take-a-role-from-a-user-delete-apiusersuseridrolesroleid)
+    + [Retrieve a list of a user's roles [GET /api/users/:id/roles]](#retrieve-a-list-of-a-users-roles-get-apiusersidroles)
     + [Retrieve a user by ID [GET /api/users/:id]](#retrieve-a-user-by-id-get-apiusersid-1)
     + [Get a user's permissions [GET /api/users/:id/permissions]](#get-a-users-permissions-get-apiusersidpermissions)
     + [Get a user's channel-specific permissions [GET /api/users/:userID/channel-permissions/:channelID]](#get-a-users-channel-specific-permissions-get-apiusersuseridchannel-permissionschannelid)
@@ -1187,7 +1190,7 @@ PATCH /api/users/12
 ```
 
 <a name='give-user-role'></a>
-### Give a role to a user [POST /api/users/:userID/roles]
+#### Give a role to a user [POST /api/users/:userID/roles]
 + requires [permission](#permissions): `manageRoles`
   + also require more permissions (see below)
 + **in-url** userID (ID) - The ID of the user to give the role to
@@ -1198,7 +1201,7 @@ The role may only be given if the requesting user has all the permissions that a
 On success, emits [user/update](#user-update) and returns `{}`.
 
 <a name='take-user-role'></a>
-### Take a role from a user [DELETE /api/users/:userID/roles/:roleID]
+#### Take a role from a user [DELETE /api/users/:userID/roles/:roleID]
 + requires [permission](#permissions): `manageRoles`
   + also requires more permissions (see below)
 + **in-url** userID (ID) - The ID of the user to take the role from
@@ -1209,7 +1212,7 @@ As with [giving a role](#give-user-role), the role may only be taken if the requ
 On success, emits [user/update](#user-update) and returns `{}`.
 
 <a name='get-user-roles'></a>
-### Retrieve a list of a user's roles [GET /api/users/:id/roles]
+#### Retrieve a list of a user's roles [GET /api/users/:id/roles]
 + does not require a session
 + **in-url** id (ID) - The ID of the user to fetch the roles of
 
