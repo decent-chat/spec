@@ -167,9 +167,9 @@ Below is a table of all permissions.
 
 ## Miscellaneous
 
-<details><summary>Endpoints</summary>
+### Endpoints
 
-### Retrieve server implementation details [GET /api]
+#### Retrieve server implementation details [GET /api]
 Returns `{ decentVersion, implementation, useSecureProtocol }`, where `decentVersion` is a string version number corresponding to the specification version the server supports/providers, `implementation` is a string typically refering to the name of the server impementation, and the boolean `useSecureProtocol` should be `true` when this server is only accessible via the _HTTPS_ and _WSS_ protocols.
 
 Should be used to check to see if a particular server is compatible with the version of the spec that you (the client) support. Note that Decent follows [SemVer](https://semver.org/), so unless the MAJOR (first) portion of the version number is different to what you expect communication should work fine.
@@ -185,7 +185,7 @@ GET /api/
 ```
 
 <a id='upload-image'></a>
-### Upload an image [POST /api/upload-image]
+#### Upload an image [POST /api/upload-image]
 + requires [permission](#permissions): `uploadImages`
 + expects form data (`multipart/form-data`)
   * `image` (gif/jpeg/png) - The image to upload. Max size: 10MB
@@ -204,7 +204,7 @@ POST /api/upload-image
 
 This endpoint may return [an error](#errors), namely FAILED, NO, or NOT_ALLOWED.
 
-</details>
+---
 
 ## Settings
 
@@ -215,18 +215,16 @@ This endpoint may return [an error](#errors), namely FAILED, NO, or NOT_ALLOWED.
 }
 ```
 
-<details><summary>Events</summary>
+### Events
 
 <a name='server-settings-update'></a>
-## server-settings/update
+#### server-settings/update
 
 Emitted with data `{ settings }` when the server settings are modified.
 
-</details>
+### Endpoints
 
-<details><summary>Endpoints</summary>
-
-### Retrieve all settings [GET /api/settings]
+#### Retrieve all settings [GET /api/settings]
 Returns `{ settings }`, where `settings` is an object representing server-specific settings.
 
 ```js
@@ -240,7 +238,7 @@ GET /api/settings
 <- }
 ```
 
-### Modify settings [PATCH /api/settings]
+#### Modify settings [PATCH /api/settings]
 + requires [permission](#permissions): `manageServer`
 + `name` (string; optional)
 + `iconURL` (string; optional)
@@ -257,7 +255,7 @@ PATCH /api/settings
 <- {}
 ```
 
-</details>
+---
 
 ## Emotes
 
@@ -268,24 +266,23 @@ PATCH /api/settings
 }
 ```
 
-<details><summary>Events</summary>
+### Events
 
 <a name='emote-new'></a>
-### emote/new
+#### emote/new
 
 Sent to all clients when an emote is created. Passed data is in the format `{ emote }`.
 
 <a name='emote-delete'></a>
-### emote/delete
+#### emote/delete
 
 Sent to all clients when an emote is deleted. Passed data is in the format `{ shortcode }`.
 
-</details>
 
-<details><summary>Endpoints</summary>
+### Endpoints
 
 <a name='list-emotes'></a>
-### List emotes [GET /api/emotes]
+#### List emotes [GET /api/emotes]
 
 Returns `{ emotes }`, where `emotes` is an array of emote objects.
 
@@ -298,7 +295,7 @@ GET /api/emotes
 ```
 
 <a name='new-emote'></a>
-### Add a new emote [POST /api/emotes]
+#### Add a new emote [POST /api/emotes]
 + requires [permission](#permissions): `manageEmotes`
 + `imageURL` (string)
 + `shortcode` (string) - Should not include colons (`:`) or spaces. Must be unique, even if the user has the `allowNonUnique` [permission](#permissions).
@@ -317,7 +314,7 @@ POST /api/emotes
 ```
 
 <a name='view-emote'></a>
-### View an emote [GET /api/emotes/:shortcode]
+#### View an emote [GET /api/emotes/:shortcode]
 + **in-url** shortcode (string)
 
 302 redirects to the `imageURL` of the emote specified. 404s if not found or invalid.
@@ -328,7 +325,7 @@ POST /api/emotes
 ```
 
 <a name='delete-emote'></a>
-### Delete an existing emote [DELETE /api/emotes/:shortcode]
+#### Delete an existing emote [DELETE /api/emotes/:shortcode]
 + requires [permission](#permissions): `manageEmotes`
 + **in-url** shortcode (string)
 
@@ -340,7 +337,7 @@ DELETE /api/emotes/package
 <- {}
 ```
 
-</details>
+---
 
 ## Sessions
 
@@ -351,10 +348,10 @@ DELETE /api/emotes/package
 }
 ```
 
-<details><summary>Endpoints</summary>
+### Endpoints
 
 <a name='get-sessions'></a>
-### Fetch the current user's sessions [GET /api/sessions]
+#### Fetch the current user's sessions [GET /api/sessions]
 + requires a valid session ID & user
 
 Responds with `{ sessions }`, where `sessions` is an array of [sessions](#sessions) that also represent the user that the provided session represents (the callee; you).
@@ -373,7 +370,7 @@ GET /api/sessions
 ```
 
 <a name='login'></a>
-### Login [POST /api/sessions]
+#### Login [POST /api/sessions]
 + `username` (string)
 + `password` (string)
 
@@ -392,7 +389,7 @@ POST /api/sessions
 <- }
 ```
 
-### Fetch session details [GET /api/sessions/:id]
+#### Fetch session details [GET /api/sessions/:id]
 + does not require a session ID via means other than in the URL
 + **in-url** id (string, session ID)
 
@@ -415,7 +412,7 @@ GET /api/sessions/12345678-ABCDEFGH
 ```
 
 <a name='logout'></a>
-### Logout [DELETE /api/sessions/:id]
+#### Logout [DELETE /api/sessions/:id]
 + does not require a session ID via means other than in the URL
 + **in-url** id (string, session ID)
 
@@ -427,7 +424,7 @@ DELETE /api/sessions/12345678-ABCDEFGH
 <- {}
 ```
 
-</details>
+---
 
 ## Messages
 
@@ -468,29 +465,27 @@ System messages lack `author` fields.
 
 Mentions target a single user only and are formatted as `<@userID>`, where `userID` is the ID of the user who is being mentioned. Mentions are stored per-user on the server. `mentionedUserIDs` is derived from the content of the message.
 
-<details><summary>Events</summary>
+### Events
 
 <a name='message-new'></a>
-### message/new
+#### message/new
 
 Sent to all clients whenever a message is [sent](#send-message) to any channel in the server. Passed data is in the format `{ message }`, where `message` is a [message](#messages) representing the new message.
 
 <a name='message-edit'></a>
-### message/edit
+#### message/edit
 
 Sent to all clients when any message is [edited](#edit-message). Passed data is in the format `{ message }`, where `message` is a [message](#messages) representing the new message.
 
 <a name='message-delete'></a>
-### message/delete
+#### message/delete
 
 Sent to all clients when any message is [deleted](#delete-message). Passed data is in the format `{ messageID }`.
 
-</details>
-
-<details><summary>Endpoints</summary>
+### Endpoints
 
 <a name='send-message'></a>
-### Send a message [POST /api/messages]
+#### Send a message [POST /api/messages]
 + requires [permissions](#permissions):
   * `sendMessages`
   * `sendSystemMessages`, if `type == "system"`
@@ -514,7 +509,7 @@ POST /api/messages
 ```
 
 <a name='get-message'></a>
-### Retrieve a message [GET /api/messages/:id]
+#### Retrieve a message [GET /api/messages/:id]
 + requires [permission](#permissions): `readMessages`
 + **in-url** id (ID) - The ID of the message to retrieve
 
@@ -532,7 +527,7 @@ GET /api/messages/1234
 ```
 
 <a name='edit-message'></a>
-### Edit a message [PATCH /api/messages/:id]
+#### Edit a message [PATCH /api/messages/:id]
 + requires a session ID where the session user is the author of message `id`
 + **in-url** id (ID) - The ID of the message to edit
 + `text` (string) - The new content of the message
@@ -552,7 +547,7 @@ PATCH /api/messages/1234
 This endpoint will return a NOT_YOURS [error](#errors) if you do not own the message in question. Emits [user/mentions/add](#user-mentions-add) to newly [mentioned](#mentions) users and [user/mentions/remove](#user-mentions-remove) to users who are no longer mentioned, if any.
 
 <a name='delete-message'></a>
-### Delete a message [DELETE /api/messages/:id]
+#### Delete a message [DELETE /api/messages/:id]
 + requires one of:
   * session with ownership of message `id`
   * [permission](#permissions) (for channel of specified message) `deleteMessages`
@@ -568,7 +563,7 @@ DELETE /api/messages/1234
 
 This endpoint may return a NOT_YOURS [error](#errors) if you do not own the message in question. Note that admins may delete any message. Emits [user/mentions/remove](#user-mentions-remove) to all previously-[mentioned](#mentions) users.
 
-</details>
+---
 
 ## Channels
 
@@ -593,39 +588,37 @@ This data is only present if a valid, logged-in session ID is provided to channe
 }
 ```
 
-<details><summary>Events</summary>
+### Events
 
 <a name='channel-new'></a>
-### channel/new
+#### channel/new
 
 Sent to all clients when a channel is [created](#create-channel). Passed data is in the format `{ channel }`, where `channel` is a [channel](#channels) representing the new channel.
 
 <a name='channel-update'></a>
-### channel/update
+#### channel/update
 
 Sent to all clients when a channel is updated ([renamed](#rename-channel), [marked as read](#mark-channel-as-read), etc). Passed data is in the format `{ channel }`, including `channel.unreadMessageCount` if the socket is actively [ponging sessionIDs](#pongdata).
 
 <a name='channel-pins-add'></a>
-### channel/pins/add
+#### channel/pins/add
 
 Sent to all clients when a message is [pinned](#pin) to a channel. Passed data is in the format `{ message }`, where `message` is the message that was pinned.
 
 <a name='channel-pins-remove'></a>
-### channel/pins/remove
+#### channel/pins/remove
 
 Sent to all clients when a message is [unpinned](#unpin) from a channel. Passed data is in the format `{ messageID }`, where `messageID` is the ID of the message that was unpinned.
 
 <a name='channel-delete'></a>
-### channel/delete
+#### channel/delete
 
 Sent to all clients when a channel is [deleted](#delete-channel). Passed data is in the format `{ channelID }`.
 
-</details>
-
-<details><summary>Endpoints</summary>
+### Endpoints
 
 <a name='channel-list'></a>
-### Get list of channels [GET /api/channels]
+#### Get list of channels [GET /api/channels]
 + does not require session, however:
   * channels where the session user does not have the `readMessages` [permission](#permissions) will not be returned
   * returns [extra data](#channel-extra-data) with session
@@ -646,7 +639,7 @@ GET /api/channels
 ```
 
 <a name='create-channel'></a>
-### Create a channel [POST /api/channels]
+#### Create a channel [POST /api/channels]
 + requires [permission](#permissions) `manageChannels`
 + `name` (name) - The name of the channel.
 
@@ -665,7 +658,7 @@ POST /api/channels
 ```
 
 <a name='get-channel'></a>
-### Retrieve a channel [GET /api/channels/:id]
+#### Retrieve a channel [GET /api/channels/:id]
 + does not require session, however:
   * returns [extra data](#channel-extra-data) with session
 + **in-url** id (ID) - The ID of the channel.
@@ -684,7 +677,7 @@ GET /api/channels/5678
 ```
 
 <a name='rename-channel'></a>
-### Rename a channel [PATCH /api/channels/:id]
+#### Rename a channel [PATCH /api/channels/:id]
 + requires [permission](#permissions) `manageChannels`
 + **in-url** id (ID) - The ID of the channel.
 + name (name) - The new name of the channel
@@ -702,7 +695,7 @@ PATCH /api/channels/5678
 ```
 
 <a name='delete-channel'></a>
-### Delete a channel [DELETE /api/channels/:id]
+#### Delete a channel [DELETE /api/channels/:id]
 + requires [permission](#permissions) `manageChannels`
 + **in-url** id (ID) - The ID of the channel to delete.
 
@@ -715,7 +708,7 @@ DELETE /api/channels/5678
 ```
 
 <a name='mark-channel-as-read'></a>
-### Mark a channel as read [POST /api/channels/:id/mark-read]
+#### Mark a channel as read [POST /api/channels/:id/mark-read]
 + requires [permission](#permissions) (for specified channel) `readMessages`
 + **in-url** id (ID) - The ID of the channel.
 
@@ -728,7 +721,7 @@ POST /api/channels/5678/mark-read
 ```
 
 <a name='get-messages-in-channel'></a>
-### Get messages in channel [GET /api/channels/:id/messages]
+#### Get messages in channel [GET /api/channels/:id/messages]
 + requires [permission](#permissions) (for specified channel) `readMessages`
 + **in-url** id (ID) - The ID of the channel to fetch messages of.
 + `before` (ID; optional) - The ID of the message right **after** the range of messages you want.
@@ -773,7 +766,7 @@ GET /api/channels/5678/messages?after=1234
 ```
 
 <a name='update-channel-permissions'></a>
-### Update channel-specific role permissions [PATCH /api/channels/:id/role-permissions]
+#### Update channel-specific role permissions [PATCH /api/channels/:id/role-permissions]
 + requires [permission](#permissions) (for specified channel) `manageRoles`
 + **in-url** id (ID)
 + **rolePermissions** - an object map of role IDs to their permissions
@@ -800,7 +793,7 @@ PATCH /api/channels/1234/role-permissions
 ```
 
 <a name='get-channel-permissions'></a>
-### Get channel-specific role permissions [GET /api/channels/:id/role-permissions]
+#### Get channel-specific role permissions [GET /api/channels/:id/role-permissions]
 + **in-url** id (ID)
 
 Returns `{ rolePermissions }` if successful, where `rolePermissions` is a map of role IDs to their individual [permissions](#permissions).
@@ -820,7 +813,7 @@ GET /api/channels/1234/role-permissions
 ```
 
 <a name='get-pins'></a>
-### Retrieve all pinned messages [GET /api/channels/:id/pins]
+#### Retrieve all pinned messages [GET /api/channels/:id/pins]
 + requires [permission](#permissions) (for specified channel) `readMessages`
 + **in-url** id (ID)
 
@@ -841,7 +834,7 @@ GET /api/channels/5678/pins
 ```
 
 <a name='pin'></a>
-### Pin a message [POST /api/channels/:id/pins]
+#### Pin a message [POST /api/channels/:id/pins]
 + requires [permission](#permissions) (for specified channel) `managePins`
 + **in-url** id (ID)
 + `messageID` (ID) - The message to pin to this channel.
@@ -859,7 +852,7 @@ POST /api/channels/5678/pins
 ```
 
 <a name='unpin'></a>
-### Unpin a message [DELETE /api/channels/:channelID/pins/:messageID]
+#### Unpin a message [DELETE /api/channels/:channelID/pins/:messageID]
 + requires [permission](#permissions) (for specified channel) `managePins`
 + **in-url** channelID (ID)
 + **in-url** messageID (ID) - The ID of the message to unpin. Errors if not pinned.
@@ -872,7 +865,7 @@ DELETE /api/channels/5678/pins/1234
 <- {}
 ```
 
-</details>
+---
 
 ## Users
 
@@ -891,46 +884,44 @@ DELETE /api/channels/5678/pins/1234
 }
 ```
 
-<details><summary>Events</summary>
+### Events
 
 <a name='user-new'></a>
-### user/new
+#### user/new
 
 Sent to all clients when a user is created. Passed data is in the format `{ user }`.
 
 <a name='user-delete'></a>
-### user/delete
+#### user/delete
 
 Sent to all clients when a user is deleted. Passed data is in the format `{ userID }`.
 
 <a name='user-online'></a>
-### user/online
+#### user/online
 
 Sent to all clients when a user becomes online. This is whenever a socket [tells the server](#pongdata) that its session ID is that of a user who was not already online before. Passed data is in the format `{ userID }`.
 
 <a name='user-offline'></a>
-### user/offline
+#### user/offline
 
 Sent to all clients when a user becomes offline. This is whenever the last socket of a user who is online terminates. Passed data is in the format `{ userID }`.
 
 <a name='user-update'></a>
-### user/update
+#### user/update
 
 Sent to all clients when a user is mutated using [PATCH /api/users/:userID](#update-user). Passed data is in the format `{ user }`.
 
 <a name='user-mentions-add'></a>
-### user/mentions/add
+#### user/mentions/add
 
 When a user is [mentioned](#mentions), this is sent to all sockets authenticated as them. Passed data is in the format `{ message }`, where `message` is the new / just edited mesage that mentioned the user.
 
 <a name='user-mentions-remove'></a>
-### user/mentions/remove
+#### user/mentions/remove
 
 When a message is deleted or edited to remove [the mention of a user](#mentions), all sockets authenticated as the unmentioned user are sent this event. Passed data is in the format `{ messageID }`, where `messageID` is the ID of the message that just stopped mentioning the user.
 
-</details>
-
-<details><summary>Endpoints</summary>
+### Endpoints
 
 <a name='user-list'></a>
 ### Fetch users [GET /api/users]
@@ -965,7 +956,7 @@ GET /api/users?sessionID=adminsid123
 ```
 
 <a name='register'></a>
-### Register (create new user) [POST /api/users]
+#### Register (create new user) [POST /api/users]
 + `username` ([name](#names)) - Must be unique
 + `password` (string) - Errors if shorter than 6 characters
 
@@ -989,7 +980,7 @@ POST /api/users
 ```
 
 <a name='get-user'></a>
-### Retrieve a user by ID [GET /api/users/:id]
+#### Retrieve a user by ID [GET /api/users/:id]
 + does not require a valid session, howerver:
   * returns extra data (`email`) if the provided session represents the user requested
 + **in-url** id (ID) - The user ID to fetch
@@ -1009,7 +1000,7 @@ GET /api/users/1
 ```
 
 <a name='get-mentions'></a>
-### List [mentions](#mentions) of a user [GET /api/users/:id/mentions]
+#### List [mentions](#mentions) of a user [GET /api/users/:id/mentions]
 + does not require session, however:
   * only returns messages where you have the `viewMessages` [permission](#permissions) for the message's channel
 + **in-url** id (ID) - The user ID to fetch the mentions of
@@ -1036,7 +1027,7 @@ GET /api/users/1/mentions?limit=1
 ```
 
 <a name='update-user'></a>
-### Update user details [PATCH /api/users/:id]
+#### Update user details [PATCH /api/users/:id]
 + requires valid, logged-in session (see below)
 + **in-url** id (ID) - The user ID to patch
 
@@ -1113,7 +1104,7 @@ On success, emits [user/update](#user-update) and returns `{}`.
 Returns `{ roleIDs }`. (Not actually more functionally useful than simply checking `user.roleIDs` from [`/api/users/:id`](#get-user); only exists for convenience.)
 
 <a name='get-user'></a>
-### Retrieve a user by ID [GET /api/users/:id]
+#### Retrieve a user by ID [GET /api/users/:id]
 + does not require a session, however:
   * if the provided session represents the user `id`, returns extra data (`email`)
 + **in-url** id (ID) - The user ID to fetch
@@ -1133,7 +1124,7 @@ GET /api/users/1
 ```
 
 <a name='get-user-permissions'></a>
-### Get a user's permissions [GET /api/users/:id/permissions]
+#### Get a user's permissions [GET /api/users/:id/permissions]
 + **in-url** id (ID) - The user ID to fetch
 
 Returns `{ permissions }`, where `permissions` is a [permissions](#permissions) object.
@@ -1152,21 +1143,21 @@ GET /api/users/1/permissions
 ```
 
 <a name='get-user-channel-permissions'></a>
-### Get a user's channel-specific permissions [GET /api/users/:userID/channel-permissions/:channelID]
+#### Get a user's channel-specific permissions [GET /api/users/:userID/channel-permissions/:channelID]
 + **in-url** userID (ID) - The user ID to fetch
 + **in-url** channelID (ID) - The channel ID to fetch
 
 Returns `{ permissions }`, where `permissions` is a [permissions](#permissions) object containing permissions, with the given channel's role-specific permissions applied.
 
 <a name='delete-user'></a>
-### Delete a user [DELETE /api/users/:id]
+#### Delete a user [DELETE /api/users/:id]
 + requires [permission](#permission): `manageUsers`
 + **in-url** id (ID) - The user to delete
 
 Returns `{}` and emits [user/delete](#user-delete).
 
 <a name='check-username-available'></a>
-### Check if a username is available [GET /api/username-available/:username]
+#### Check if a username is available [GET /api/username-available/:username]
 + does not require session
 + **in-url** username (name)
 
@@ -1180,7 +1171,7 @@ GET /api/username-available/patrick
 <- }
 ```
 
-</details>
+---
 
 ## Roles
 
@@ -1196,29 +1187,27 @@ GET /api/username-available/patrick
 
 * [Permissions](#permissions)
 
-<details><summary>Events</summary>
+### Events
 
 <a name='role-new'></a>
-### role/new
+#### role/new
 
 Sent to all clients when a role is [added](#new-role). Passed data is in the format `{ role }`.
 
 <a name='role-update'></a>
-### role/update
+#### role/update
 
 Sent to all clients when a role is [updated](#update-role). Passed data is in the format `{ role }`.
 
 <a name='role-delete'></a>
-### role/delete
+#### role/delete
 
 Sent to all clients when a role is [deleted](#delete-role). Passed data is in the format `{ roleID }`.
 
-</details>
-
-<details><summary>Endpoints</summary>
+### Endpoints
 
 <a name='list-roles'></a>
-### List roles [GET /api/roles]
+#### List roles [GET /api/roles]
 
 Returns `{ roles }`, where `roles` is an array of role objects.
 
@@ -1237,12 +1226,12 @@ GET /api/roles
 ```
 
 <a name='get-role-order'></a>
-### Retrieve role prioritization order [GET /api/roles/order]
+#### Retrieve role prioritization order [GET /api/roles/order]
 
 Returns `{ roleIDs }`, where `roleIDs` is an array of role IDs representing the order that roles are applied when [permissions](#permissions) are calculated. Internal roles, such as `_guest` and `_everyone`, are not included.
 
 <a name='prioritize-roles'></a>
-### Change role prioritization order [PATCH /api/roles/order]
+#### Change role prioritization order [PATCH /api/roles/order]
 
 + requires [permission](#permissions): `manageRoles`
 + `roleIDs` (array of IDs) - The order roles are applied in
@@ -1276,7 +1265,7 @@ GET /api/roles
 ```
 
 <a name='get-role'></a>
-### Retrieve a role by ID [GET /api/roles/:id]
+#### Retrieve a role by ID [GET /api/roles/:id]
 
 Returns `{ role }`.
 
@@ -1293,7 +1282,7 @@ GET /api/roles/_everyone
 ```
 
 <a name='new-role'></a>
-### Add a new role [POST /api/roles]
+#### Add a new role [POST /api/roles]
 + requires [permission](#permissions): `manageRoles`
 + `name` (string) - Max length 32.
 + `permissions` ([Permissions object](#permissions)) - this role's intended permissions
@@ -1302,7 +1291,7 @@ GET /api/roles/_everyone
 Returns `{ roleID }` if successful, where `roleID` is the ID of the new role. Emits [role/new](#role-new). The role is added to the role prioritization order as the most prioritized.
 
 <a name='update-role'></a>
-### Update a role [PATCH /api/roles/:id]
+#### Update a role [PATCH /api/roles/:id]
 + requires [permission](#permissions): `manageRoles`
 + **in-url** id (ID)
 + `name` (string; optional) - Max length 32.
@@ -1312,10 +1301,10 @@ Returns `{ roleID }` if successful, where `roleID` is the ID of the new role. Em
 Returns `{}` and emits [role/update](#role-update) if successful. May emit [user/update](#user-update) as required if users' computed permissions change.
 
 <a name='delete-role'></a>
-### Delete a role [DELETE /api/roles/:id]
+#### Delete a role [DELETE /api/roles/:id]
 + requires [permission](#permissions): `manageRoles`
 + **in-url** id (ID string)
 
 Returns `{}` if successful. Emits [role/delete](#role-delete). The role is removed from the role prioritization order.
 
-</details>
+---
