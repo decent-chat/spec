@@ -167,7 +167,7 @@ Below is a table of all permissions.
 
 ## Miscellaneous
 
-<details><summary>Endpoints</summary>
+**Endpoints**
 
 ### Retrieve server implementation details [GET /api]
 Returns `{ decentVersion, implementation, useSecureProtocol }`, where `decentVersion` is a string version number corresponding to the specification version the server supports/providers, `implementation` is a string typically refering to the name of the server impementation, and the boolean `useSecureProtocol` should be `true` when this server is only accessible via the _HTTPS_ and _WSS_ protocols.
@@ -204,7 +204,7 @@ POST /api/upload-image
 
 This endpoint may return [an error](#errors), namely FAILED, NO, or NOT_ALLOWED.
 
-</details>
+---
 
 ## Settings
 
@@ -215,16 +215,14 @@ This endpoint may return [an error](#errors), namely FAILED, NO, or NOT_ALLOWED.
 }
 ```
 
-<details><summary>Events</summary>
+**Events**
 
 <a name='server-settings-update'></a>
 ## server-settings/update
 
 Emitted with data `{ settings }` when the server settings are modified.
 
-</details>
-
-<details><summary>Endpoints</summary>
+**Endpoints**
 
 ### Retrieve all settings [GET /api/settings]
 Returns `{ settings }`, where `settings` is an object representing server-specific settings.
@@ -257,7 +255,7 @@ PATCH /api/settings
 <- {}
 ```
 
-</details>
+---
 
 ## Emotes
 
@@ -268,7 +266,7 @@ PATCH /api/settings
 }
 ```
 
-<details><summary>Events</summary>
+**Events**
 
 <a name='emote-new'></a>
 ### emote/new
@@ -280,9 +278,8 @@ Sent to all clients when an emote is created. Passed data is in the format `{ em
 
 Sent to all clients when an emote is deleted. Passed data is in the format `{ shortcode }`.
 
-</details>
 
-<details><summary>Endpoints</summary>
+**Endpoints**
 
 <a name='list-emotes'></a>
 ### List emotes [GET /api/emotes]
@@ -340,7 +337,7 @@ DELETE /api/emotes/package
 <- {}
 ```
 
-</details>
+---
 
 ## Sessions
 
@@ -351,7 +348,7 @@ DELETE /api/emotes/package
 }
 ```
 
-<details><summary>Endpoints</summary>
+**Endpoints**
 
 <a name='get-sessions'></a>
 ### Fetch the current user's sessions [GET /api/sessions]
@@ -427,7 +424,7 @@ DELETE /api/sessions/12345678-ABCDEFGH
 <- {}
 ```
 
-</details>
+---
 
 ## Messages
 
@@ -468,7 +465,7 @@ System messages lack `author` fields.
 
 Mentions target a single user only and are formatted as `<@userID>`, where `userID` is the ID of the user who is being mentioned. Mentions are stored per-user on the server. `mentionedUserIDs` is derived from the content of the message.
 
-<details><summary>Events</summary>
+**Events**
 
 <a name='message-new'></a>
 ### message/new
@@ -485,9 +482,7 @@ Sent to all clients when any message is [edited](#edit-message). Passed data is 
 
 Sent to all clients when any message is [deleted](#delete-message). Passed data is in the format `{ messageID }`.
 
-</details>
-
-<details><summary>Endpoints</summary>
+**Endpoints**
 
 <a name='send-message'></a>
 ### Send a message [POST /api/messages]
@@ -568,7 +563,7 @@ DELETE /api/messages/1234
 
 This endpoint may return a NOT_YOURS [error](#errors) if you do not own the message in question. Note that admins may delete any message. Emits [user/mentions/remove](#user-mentions-remove) to all previously-[mentioned](#mentions) users.
 
-</details>
+---
 
 ## Channels
 
@@ -593,7 +588,7 @@ This data is only present if a valid, logged-in session ID is provided to channe
 }
 ```
 
-<details><summary>Events</summary>
+**Events**
 
 <a name='channel-new'></a>
 ### channel/new
@@ -620,9 +615,7 @@ Sent to all clients when a message is [unpinned](#unpin) from a channel. Passed 
 
 Sent to all clients when a channel is [deleted](#delete-channel). Passed data is in the format `{ channelID }`.
 
-</details>
-
-<details><summary>Endpoints</summary>
+**Endpoints**
 
 <a name='channel-list'></a>
 ### Get list of channels [GET /api/channels]
@@ -872,7 +865,7 @@ DELETE /api/channels/5678/pins/1234
 <- {}
 ```
 
-</details>
+---
 
 ## Users
 
@@ -891,7 +884,7 @@ DELETE /api/channels/5678/pins/1234
 }
 ```
 
-<details><summary>Events</summary>
+**Events**
 
 <a name='user-new'></a>
 ### user/new
@@ -928,9 +921,7 @@ When a user is [mentioned](#mentions), this is sent to all sockets authenticated
 
 When a message is deleted or edited to remove [the mention of a user](#mentions), all sockets authenticated as the unmentioned user are sent this event. Passed data is in the format `{ messageID }`, where `messageID` is the ID of the message that just stopped mentioning the user.
 
-</details>
-
-<details><summary>Endpoints</summary>
+**Endpoints**
 
 <a name='user-list'></a>
 ### Fetch users [GET /api/users]
@@ -1155,7 +1146,7 @@ GET /api/username-available/patrick
 <- }
 ```
 
-</details>
+---
 
 ## Roles
 
@@ -1171,7 +1162,7 @@ GET /api/username-available/patrick
 
 * [Permissions](#permissions)
 
-<details><summary>Events</summary>
+**Events**
 
 <a name='role-new'></a>
 ### role/new
@@ -1188,9 +1179,7 @@ Sent to all clients when a role is [updated](#update-role). Passed data is in th
 
 Sent to all clients when a role is [deleted](#delete-role). Passed data is in the format `{ roleID }`.
 
-</details>
-
-<details><summary>Endpoints</summary>
+**Endpoints**
 
 <a name='list-roles'></a>
 ### List roles [GET /api/roles]
@@ -1293,4 +1282,4 @@ Returns `{}` and emits [role/update](#role-update) if successful. May emit [user
 
 Returns `{}` if successful. Emits [role/delete](#role-delete). The role is removed from the role prioritization order.
 
-</details>
+---
