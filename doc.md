@@ -431,6 +431,7 @@ POST /api/emotes
 
 <a name='view-emote'></a>
 #### View an emote [GET /api/emotes/:shortcode]
++ never requires a session (public endpoint)
 + **in-url** shortcode (string)
 
 302 redirects to the `imageURL` of the emote specified. 404s if not found or invalid.
