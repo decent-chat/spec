@@ -19,7 +19,7 @@ implementation, please refer to that document also.**
 - [Authentication](#authentication)
   * [With HTTP(S) - per-request](#with-https---per-request)
   * [With WebSockets - ping/pong periodically](#with-websockets---pingpong-periodically)
-    + ['pingdata' evemt](#pingdata-evemt)
+    + ['pingdata' event](#pingdata-event)
     + ['pongdata' event](#pongdata-event)
 - [Errors](#errors)
 - [Permissions](#permissions)
@@ -91,7 +91,7 @@ implementation, please refer to that document also.**
     + [user/mentions/add](#usermentionsadd)
     + [user/mentions/remove](#usermentionsremove)
   * [Endpoints](#endpoints-6)
-  * [Fetch users [GET /api/users]](#fetch-users-get-apiusers)
+    + [Fetch users [GET /api/users]](#fetch-users-get-apiusers)
     + [Register (create new user) [POST /api/users]](#register-create-new-user-post-apiusers)
     + [Retrieve a user by ID [GET /api/users/:id]](#retrieve-a-user-by-id-get-apiusersid)
     + [List mentions of a user [GET /api/users/:id/mentions]](#list-mentions-of-a-user-get-apiusersidmentions)
@@ -161,7 +161,7 @@ Note that "you" in this document typically refers to the provided session ID's r
 
 ### With WebSockets - ping/pong periodically
 
-#### 'pingdata' evemt
+#### 'pingdata' event
 
 Sent periodically (typically every 10 seconds) by the server, as well as immediately upon the client socket connecting. Clients should respond with a `pongdata` event, as described below. No `data` is sent with the event.
 
@@ -573,7 +573,7 @@ DELETE /api/sessions/12345678-ABCDEFGH
 
 #### Message types
 
-There are currently two message types, `"user"` and `"system"`. Messages sent by users are always marked `"user"`, however both the server and users with the `sendSystemMessage` [permission](#permissions). can choose to send system-level messages for things, such as user joins or when pins are added. Ideally, these would be styled differently in clients.
+There are currently two message types, `"user"` and `"system"`. Messages sent by users are always marked `"user"`, however both the server and users with the `sendSystemMessage` [permission](#permissions) can choose to send system-level messages for things, such as user joins or when pins are added. Ideally, these would be styled differently in clients.
 
 System messages lack `author` fields.
 
@@ -786,7 +786,7 @@ GET /api/channels/5678
 
 <- {
 <-   "channel": {
-<-     id": "5678",
+<-     "id": "5678",
 <-     "name": "general"
 <-   }
 <- }
@@ -1040,7 +1040,7 @@ When a message is deleted or edited to remove [the mention of a user](#mentions)
 ### Endpoints
 
 <a name='user-list'></a>
-### Fetch users [GET /api/users]
+#### Fetch users [GET /api/users]
 Returns `{ users }`, where `users` is an array of [users](#users).
 
 ```js
