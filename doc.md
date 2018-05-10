@@ -284,11 +284,13 @@ Below is a table of all permissions.
 **Only** the following permissions are applicable as channel-specific permission
 overrides:
 
+| Name                 | Change in meaning |
+| -------------------- | ----------------- |
 | `manageChannels`     | Applies to the current channel only |
 | `readMessages`       | If `false`, the channel will not appear in the channel list for you |
-| `sendMessages`       ||
-| `deleteMessages`     ||
-| `sendSystemMessages` ||
+| `sendMessages`       | |
+| `deleteMessages`     | |
+| `sendSystemMessages` | |
 
 <a name='api'></a>
 
