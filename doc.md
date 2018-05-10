@@ -286,7 +286,7 @@ overrides:
 
 | Name                 | Change in meaning |
 | -------------------- | ----------------- |
-| `manageChannels`     | Applies to the current channel only |
+| `manageChannels`     | Allows changes to the role permission overrides of this channel |
 | `readMessages`       | If `false`, the channel will not appear in the channel list for you |
 | `sendMessages`       | |
 | `deleteMessages`     | |
@@ -896,7 +896,7 @@ GET /api/channels/5678/messages?after=1234
 
 <a name='update-channel-permissions'></a>
 #### Update channel-specific role permissions [PATCH /api/channels/:id/role-permissions]
-+ requires [permission](#permissions) (for specified channel) `manageRoles`
++ requires [permission](#permissions) (for specified channel) `manageChannels`
 + **in-url** id (ID)
 + **rolePermissions** - an object map of role IDs to their permissions, limited by [channel-specific applicable permissions only](#channel-specific-permissions)
 
