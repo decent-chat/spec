@@ -899,6 +899,7 @@ GET /api/channels/5678/messages?after=1234
 + requires [permission](#permissions) (for specified channel) `manageChannels`
 + **in-url** id (ID)
 + **rolePermissions** - an object map of role IDs to their permissions, limited by [channel-specific applicable permissions only](#channel-specific-permissions)
+  * The internal role `_everyone` cannot override permissions other than `readMessages`, as you must be logged in to perform any other action.
 
 Returns `{}` if successful. Note that if a role is not specified on the **roles** parameter, its permissions on the channel will not be changed. To delete an entry, pass `{}` as the role's permissions; since this would reset the role's permissions all to unset, the role would have no effect, and is removed from the channel's `rolePermissions` map.
 
