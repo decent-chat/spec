@@ -197,24 +197,14 @@ Permissions are stored within an object mapping permission key to
 | `undefined` | Unset, follow cascade  |
 
 For example, a role that grants the `sendMessages` permission but changes
-nothing else would have the permission object:
+nothing else would have the following permission object.
 
-  {
-    "sendMessages": true
-  }
+    {
+      "sendMessages": true
+    }
 
-There are 2 constant role IDs that servers MUST apply based on whether the
-requester provided a session ID or not (see section 2.4):
-
-* `_user`, applied to all logged-in users as a fallback role
-* `_everyone`, applied to **all** requesters
-
-Servers MUST NOT allow any of these constant roles to be deleted. However,
-they SHOULD be editable (that is, their permissions object and name).
-
-Note: Servers MAY give a particular group of users some kind of automatically
-generated 'administrator' role to allow changes to be made by the owner of the
-server without manually editing the database or similar.
+See [the permission table](doc.md#permission-table) for a list of all permissions
+and their meanings.
 
 Individual permissions MUST be computed according to the following algorithm.
 
@@ -233,8 +223,8 @@ a NOT_ALLOWED error (and, therefore, be a no-op).
 The order of `r` (role priority) MUST be sorted in the following way:
 
 * Channel-specific permissions for roles of the user (First.)
-* Channel-specific permissions for the `_user` role, if the user is a logged-in member of the server
-* Channel-specific permissions for the `_everyone` role
+* Channel-specific permissions for the [internal `_user` role](#internal-roles), if the user is a logged-in member of the server
+* Channel-specific permissions for the [internal `_everyone` role](#internal-roles)
 * Server-wide permissions for roles of the user
 * Server-wide permissions for the `_user` role (if applicable, as above)
 * Server-wide permissions for the `_everyone` role (Last.)
@@ -244,6 +234,28 @@ MUST be prioritized according to the role prioritization order (see
 `PATCH /api/roles/order` in section 4.3). Note that the order of any given
 user's `roles` property MUST NOT have any effect on the order roles are
 applied when calculating their permissions.
+
+#### Internal roles
+
+This specification defines **two** 'internal roles.' That is, they are applied
+under-the-hood to users under different circumstances. They are:
+
+| role.id   | role.permissions         | Applied to            |
+| --------- | ------------------------ | --------------------- |
+| _everyone | All `false`              | All requests          |
+| _user     | `{ sendMessages: true }` | Any logged-in request |
+
+Servers MUST apply based on whether the requester provided a valid session ID or
+not (see section 2.4):
+
+Servers MUST NOT allow any of these constant roles to be deleted, or updated at
+a global level. However, either role's permissions MUST be
+[editable on a channel-specific basis](doc.md#update-channel-permissions).
+
+> Note: Servers MAY give a particular group of users some kind of automatically
+> generated 'administrator' role to allow changes to be made by the owner of the
+> server without manually editing the database. These roles are **not** classed
+> as internal.
 
 ## 3. Bidirectional WebSocket communication
 
