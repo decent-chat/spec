@@ -1365,7 +1365,7 @@ Returns `{ roleIDs }`, where `roleIDs` is an array of role IDs representing the 
 
 + requires [permission](#permissions): `manageRoles`
 + `roleIDs` (array of IDs) - The order roles are applied in
-  * Must contain all role IDs exactly once (no more, no less), except for [internal roles](spec.md#internal-roles) such as `_user` and `_everyone`
+  * Must contain all non-[internal](spec.md#internal-roles) role IDs exactly once (no more, no less)
 
 Returns `{}` when successful. Changes the order that roles are applied in; initial items are the most prioritized. See [Permissions](#permissions).
 
