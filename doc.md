@@ -23,6 +23,8 @@ implementation, please refer to that document also.**
     + ['pongdata' event](#pongdata-event)
 - [Errors](#errors)
 - [Permissions](#permissions)
+  * [Permission table](#permission-table)
+  * [Channel-specific permissions](#channel-specific-permissions)
 - [Miscellaneous](#miscellaneous)
   * [Endpoints](#endpoints)
     + [Retrieve server implementation details [GET /api]](#retrieve-server-implementation-details-get-api)

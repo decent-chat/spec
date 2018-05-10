@@ -16,6 +16,7 @@
     + [2.3 Error responses](#23-error-responses)
     + [2.4 Session IDs and authentication](#24-session-ids-and-authentication)
     + [2.5 Permissions and roles](#25-permissions-and-roles)
+      - [Internal roles](#internal-roles)
   * [3. Bidirectional WebSocket communication](#3-bidirectional-websocket-communication)
     + [3.1 WebSocket protocol](#31-websocket-protocol)
     + [3.2 "pingdata" and "pongdata" events](#32-pingdata-and-pongdata-events)
