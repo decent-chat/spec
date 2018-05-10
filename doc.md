@@ -23,6 +23,8 @@ implementation, please refer to that document also.**
     + ['pongdata' event](#pongdata-event)
 - [Errors](#errors)
 - [Permissions](#permissions)
+  * [Permission table](#permission-table)
+  * [Channel-specific permissions](#channel-specific-permissions)
 - [Miscellaneous](#miscellaneous)
   * [Endpoints](#endpoints)
     + [Retrieve server implementation details [GET /api]](#retrieve-server-implementation-details-get-api)
@@ -244,9 +246,9 @@ We look at the final permission object: `{readMessages: false, sendMessages: fal
 
 The actual priority of permission objects is determined according to the roles applied to the user and channel-specific permissions (which are dependent on the roles), and the order is determined as follows:
 
-* Channel-specific permissions for roles of the user (First.)
-* Channel-specific permissions for the `_user` role, if the user is a logged-in member of the server
-* Channel-specific permissions for the `_everyone` role
+* [Channel-specific permissions](#channel-specific-permissions) for roles of the user (First.)
+* [Channel-specific permissions](#channel-specific-permissions) for the `_user` role, if the user is a logged-in member of the server
+* [Channel-specific permissions](#channel-specific-permissions) for the `_everyone` role
 * Server-wide permissions for roles of the user
 * Server-wide permissions for the `_user` role (if applicable, as above)
 * Server-wide permissions for the `_everyone` role (Last.)
@@ -255,13 +257,13 @@ Permissions for roles of the user (both globally and channel-specific) are prior
 
 </details>
 
-<details><summary><b>Table of permissions</b></summary>
+### Permission table
 
 A set of permissions can be configured for different [roles](#roles). When these roles are attached to users, they grant or revoke specific privileges within the entire server.
 
 Below is a table of all permissions.
 
-| Code              | Description                                              |
+| Name              | Description                                              |
 | ----------------- | -------------------------------------------------------- |
 | `manageServer`    | Allows changes to [server settings](#settings).          |
 | `manageUsers`     | Allows for updating of users other than yourself, and allows deletion of users. |
@@ -277,7 +279,18 @@ Below is a table of all permissions.
 | `uploadImages`    | Allows [image uploads](#upload-image).                   |
 | `allowNonUnique`  | Allows the creation of things with non-unique [names](#names). |
 
-</details>
+### Channel-specific permissions
+
+**Only** the following permissions are applicable as channel-specific permission
+overrides:
+
+| Name                 | Change in meaning |
+| -------------------- | ----------------- |
+| `manageChannels`     | Allows changes to the role permission overrides of this channel |
+| `readMessages`       | If `false`, the channel will not appear in the channel list for you |
+| `sendMessages`       | |
+| `deleteMessages`     | |
+| `sendSystemMessages` | |
 
 <a name='api'></a>
 
@@ -883,9 +896,9 @@ GET /api/channels/5678/messages?after=1234
 
 <a name='update-channel-permissions'></a>
 #### Update channel-specific role permissions [PATCH /api/channels/:id/role-permissions]
-+ requires [permission](#permissions) (for specified channel) `manageRoles`
++ requires [permission](#permissions) (for specified channel) `manageChannels`
 + **in-url** id (ID)
-+ **rolePermissions** - an object map of role IDs to their permissions
++ **rolePermissions** - an object map of role IDs to their permissions, limited by [channel-specific applicable permissions only](#channel-specific-permissions)
 
 Returns `{}` if successful. Note that if a role is not specified on the **roles** parameter, its permissions on the channel will not be changed. To delete an entry, pass `{}` as the role's permissions; since this would reset the role's permissions all to unset, the role would have no effect, and is removed from the channel's `rolePermissions` map.
 
@@ -1302,6 +1315,7 @@ GET /api/username-available/patrick
 #### See also
 
 * [Permissions](#permissions)
+* (Spec) [Internal roles](spec.md#internal-roles)
 
 ### Events
 
@@ -1344,14 +1358,14 @@ GET /api/roles
 <a name='get-role-order'></a>
 #### Retrieve role prioritization order [GET /api/roles/order]
 
-Returns `{ roleIDs }`, where `roleIDs` is an array of role IDs representing the order that roles are applied when [permissions](#permissions) are calculated. Internal roles, such as `_guest` and `_everyone`, are not included.
+Returns `{ roleIDs }`, where `roleIDs` is an array of role IDs representing the order that roles are applied when [permissions](#permissions) are calculated. [Internal roles](spec.md#internal-roles), such as `_user` and `_everyone`, are not included.
 
 <a name='prioritize-roles'></a>
 #### Change role prioritization order [PATCH /api/roles/order]
 
 + requires [permission](#permissions): `manageRoles`
 + `roleIDs` (array of IDs) - The order roles are applied in
-  * Must contain all role IDs just once, except for internal ones such as `_user` and `_everyone`
+  * Must contain all non-[internal](spec.md#internal-roles) role IDs exactly once (no more, no less)
 
 Returns `{}` when successful. Changes the order that roles are applied in; initial items are the most prioritized. See [Permissions](#permissions).
 
@@ -1410,6 +1424,7 @@ Returns `{ roleID }` if successful, where `roleID` is the ID of the new role. Em
 #### Update a role [PATCH /api/roles/:id]
 + requires [permission](#permissions): `manageRoles`
 + **in-url** id (ID)
+  * must not refer to an [internal role](spec.md#internal-roles)
 + `name` (string; optional) - Max length 32.
 + `permissions` ([Permissions object](#permissions)) - the new intended permissions for this role
   * **Cannot contain permissions that the requesting session's user does not have**
@@ -1420,6 +1435,7 @@ Returns `{}` and emits [role/update](#role-update) if successful. May emit [user
 #### Delete a role [DELETE /api/roles/:id]
 + requires [permission](#permissions): `manageRoles`
 + **in-url** id (ID string)
+  * must not refer to an [internal role](spec.md#internal-roles)
 
 Returns `{}` if successful. Emits [role/delete](#role-delete). The role is removed from the role prioritization order.
 
