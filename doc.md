@@ -1367,8 +1367,8 @@ Returns `{ roleIDs }`, where `roleIDs` is an array of role IDs representing the 
 + requires [permission](#permissions): `manageRoles`
 + `roleIDs` (array of IDs) - The order roles are applied in
   * Must contain all non-[internal](spec.md#internal-roles) role IDs exactly once (no more, no less)
-  * The requesting user can reorder all roles which are already prioritized below their own most-prioritized role; the order of this role and all roles above must not be changed
-  * The order cannot be changed such that the requesting user would not the `manageRoles` permission anymore
+  * The requesting user can reorder all roles which are already prioritized below their own most-prioritized role; the order of said role and all roles above must not be changed
+  * The order cannot be changed such that the requesting user would not have the `manageRoles` permission anymore
 
 Returns `{}` when successful. Changes the order that roles are applied in; initial items are the most prioritized. See [Permissions](#permissions).
 
