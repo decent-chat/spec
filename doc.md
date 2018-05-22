@@ -1274,7 +1274,7 @@ GET /api/roles/_everyone
 + `permissions` ([Permissions object](#permissions)) - this role's intended permissions
   * **Cannot contain permissions that the requesting session's user does not have**
 
-Returns `{ roleID }` if successful, where `roleID` is the ID of the new role. Emits [role/new](#role-new). The role is added to the role prioritization order as the most prioritized.
+Returns `{ roleID }` if successful, where `roleID` is the ID of the new role. Emits [role/new](#role-new). The role is added to the role prioritization order immediately under (less prioritized than) the creating user's most-prioritized role.
 
 <a name='update-role'></a>
 ### Update a role [PATCH /api/roles/:id]
